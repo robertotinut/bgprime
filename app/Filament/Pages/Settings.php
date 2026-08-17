@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\Setting;
 use BackedEnum;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
@@ -32,11 +33,11 @@ class Settings extends Page implements HasForms
     public function mount(): void
     {
         $this->form->fill([
+            'qris_image' => Setting::get('qris_image'),
             'admin_chat_id' => config('services.telegram.admin_chat_id'),
-            'channel_id' => config('services.telegram.channel_id'),
+            'channel_id' => config('services.telegram.channel_id') ?: 'Belum diset',
             'transaction_bot_username' => config('services.telegram.transaction_bot_username'),
             'delivery_bot_username' => config('services.telegram.delivery_bot_username'),
-            'qris_image_path' => config('services.telegram.qris_image_path'),
         ]);
     }
 
@@ -45,14 +46,17 @@ class Settings extends Page implements HasForms
         return $schema
             ->components([
                 Section::make('QRIS Payment Barcode')
-                    ->description('Upload barcode QRIS yang akan ditampilkan kepada customer saat checkout')
+                    ->description('Upload barcode QRIS toko Anda. Barcode ini akan dikirim otomatis ke pembeli saat checkout.')
                     ->schema([
                         FileUpload::make('qris_image')
                             ->label('Upload Gambar QRIS')
                             ->image()
                             ->disk('public')
                             ->directory('qris')
-                            ->preserveFilenames(),
+                            ->visibility('public')
+                            ->imagePreviewHeight('250')
+                            ->helperText('Format yang didukung: PNG, JPG, JPEG. Gambar otomatis tersimpan dan aktif.')
+                            ->required(),
                     ]),
 
                 Section::make('Telegram Bot & Channel IDs')
@@ -60,7 +64,7 @@ class Settings extends Page implements HasForms
                     ->schema([
                         TextInput::make('admin_chat_id')
                             ->label('Telegram Admin Chat ID')
-                            ->helperText('ID chat Telegram Anda/grup admin untuk menerima alert real-time order baru dan pembayaran.')
+                            ->helperText('ID Telegram Anda untuk menerima alert pembayaran real-time.')
                             ->disabled(),
 
                         TextInput::make('channel_id')
@@ -85,16 +89,14 @@ class Settings extends Page implements HasForms
     {
         $data = $this->form->getState();
 
-        if (!empty($data['qris_image'])) {
-            Notification::make()
-                ->title('Pengaturan QRIS berhasil diperbarui!')
-                ->success()
-                ->send();
-        } else {
-            Notification::make()
-                ->title('Pengaturan tersimpan.')
-                ->success()
-                ->send();
+        if (isset($data['qris_image'])) {
+            Setting::set('qris_image', $data['qris_image']);
         }
+
+        Notification::make()
+            ->title('Barcode QRIS berhasil disimpan!')
+            ->body('Gambar QRIS sekarang aktif dan akan dikirim ke pembeli saat melakukan pesanan.')
+            ->success()
+            ->send();
     }
 }

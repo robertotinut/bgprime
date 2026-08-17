@@ -186,6 +186,12 @@ class TransactionBotService
             ],
         ];
 
+        $settingQris = \App\Models\Setting::get('qris_image');
+        if ($settingQris && \Illuminate\Support\Facades\Storage::disk('public')->exists($settingQris)) {
+            $absPath = \Illuminate\Support\Facades\Storage::disk('public')->path($settingQris);
+            return $this->client->sendPhoto($chatId, $absPath, $text, $keyboard);
+        }
+
         $qrisPath = config('services.telegram.qris_image_path');
         if ($qrisPath && file_exists(base_path($qrisPath))) {
             return $this->client->sendPhoto($chatId, base_path($qrisPath), $text, $keyboard);
