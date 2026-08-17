@@ -41,7 +41,7 @@
         <!-- Hero Section -->
         <section class="hero">
             <div class="hero-pill">
-                Reseller & Akun Software Resmi
+                ✨ Akun Software & Tools Digital Bergaransi
             </div>
             <h1 class="hero-title">
                 Software & Tool Digital Premium.<br>Instan Tanpa Ribet.
@@ -105,9 +105,15 @@
             <div class="product-card" data-cat="{{ $product->category_id }}" data-name="{{ strtolower($product->name) }}" data-desc="{{ strtolower($product->description) }}">
                 <div class="card-top">
                     <div class="card-header">
-                        <span class="badge-tag {{ $product->isInstant() ? 'badge-instant' : 'badge-manual' }}">
-                            {{ $product->isInstant() ? '⚡ Instant' : '🛒 Reseller' }}
+                        @if($product->isInstant())
+                        <span class="badge-tag badge-instant">
+                            ⚡ Instant Auto
                         </span>
+                        @else
+                        <span class="badge-tag" style="background: rgba(255, 255, 255, 0.05); color: var(--text-secondary); border: 1px solid var(--border-subtle);">
+                            🛡️ Garansi Aktif
+                        </span>
+                        @endif
                         <span class="stock-tag">
                             Stok: {{ $product->stock_qty }}
                         </span>
