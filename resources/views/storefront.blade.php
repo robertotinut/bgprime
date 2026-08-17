@@ -3,366 +3,269 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BGPrime Store - Toko Produk Digital Legal & Terpercaya</title>
-    <meta name="description" content="Platform penjualan produk digital legal dan terpercaya berbasis Telegram Bot dan QRIS otomatis. Akun premium ChatGPT, Canva, CapCut, Netflix, Spotify dll.">
+    <title>BGPrime — Software & Digital Tools Store</title>
+    <meta name="description" content="Toko akun software dan tools digital resmi: ChatGPT Plus, Canva Pro, CapCut, Netflix, Spotify. Pembayaran QRIS otomatis dan pengiriman via Telegram.">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <!-- Material Theme Stylesheet -->
     <link rel="stylesheet" href="{{ asset('css/material-theme.css') }}">
 </head>
 <body>
 
-    <!-- Dynamic Background Atmosphere -->
-    <div class="bg-glow-wrapper">
-        <div class="bg-glow-1"></div>
-        <div class="bg-glow-2"></div>
-    </div>
+    <div class="grid-background"></div>
 
-    <!-- Material 3 Top App Bar -->
-    <header class="m3-top-app-bar">
-        <div class="m3-container">
-            <div class="app-bar-content">
-                <a href="{{ url('/') }}" class="brand-logo">
-                    <div class="brand-icon">⚡</div>
-                    <div>
-                        <div class="brand-name">BGPrime Store</div>
-                    </div>
-                </a>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container navbar-inner">
+            <a href="{{ url('/') }}" class="brand">
+                <div class="brand-badge">⚡</div>
+                <div class="brand-text">BGPrime</div>
+            </a>
 
-                <div class="app-bar-actions">
-                    <button type="button" class="m3-btn m3-btn-tonal" onclick="openOrderModal()">
-                        🔍 Cek Status Pesanan
-                    </button>
-                    @if(!empty($channelUsername) || !empty($channelId))
-                    <a href="https://t.me/{{ ltrim($channelUsername ?? $channelId, '@') }}" target="_blank" class="m3-btn m3-btn-outlined" style="display: none; @media(min-width: 640px){display: inline-flex;}">
-                        📢 Channel Telegram
-                    </a>
-                    @endif
-                    <a href="https://t.me/{{ $transactionBotUsername }}" target="_blank" class="m3-btn m3-btn-filled-primary">
-                        🤖 Buka Bot
-                    </a>
+            <div class="nav-actions">
+                <div class="nav-status-pill">
+                    <span class="status-dot"></span>
+                    <span>Bot Online</span>
                 </div>
+                <button type="button" class="btn btn-ghost" onclick="openModal()">
+                    Lacak Order
+                </button>
+                <a href="https://t.me/{{ $transactionBotUsername }}" target="_blank" class="btn btn-telegram">
+                    Telegram Bot
+                </a>
             </div>
         </div>
-    </header>
+    </nav>
 
-    <main>
+    <!-- Main Content -->
+    <main class="container">
         <!-- Hero Section -->
-        <section class="hero-section">
-            <div class="m3-container">
-                <div class="hero-badge">
-                    <span>✨</span> Produk Digital Legal & Bergaransi • Sistem Telegram Terintegrasi
-                </div>
-
-                <h1 class="hero-title">
-                    Akses Software & Tool Premium<br>
-                    <span>Cepat, Murah, & Terpercaya</span>
-                </h1>
-
-                <p class="hero-subtitle">
-                    Dapatkan akun resmi ChatGPT Plus, Canva Pro, CapCut, Netflix, Spotify dengan proses instan via Telegram Bot dan pembayaran aman QRIS semua e-wallet & bank.
-                </p>
-
-                <div class="hero-cta-group">
-                    <a href="https://t.me/{{ $transactionBotUsername }}" target="_blank" class="m3-btn m3-btn-filled-primary m3-btn-hero">
-                        🛍️ Mulai Belanja via Bot Telegram
-                    </a>
-                    <button type="button" class="m3-btn m3-btn-tonal m3-btn-hero" onclick="openOrderModal()">
-                        📦 Lacak Pesanan Saya
-                    </button>
-                </div>
-
-                <!-- Stats Overview Row -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value">{{ number_format($totalProducts) }}</div>
-                        <div class="stat-label">Produk Ready Stock</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">{{ number_format($totalCategories) }}</div>
-                        <div class="stat-label">Kategori Pilihan</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">{{ number_format(max(10, $totalCompletedOrders + 120)) }}+</div>
-                        <div class="stat-label">Transaksi Berhasil</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">⚡ Instan</div>
-                        <div class="stat-label">Delivery Bot Otomatis</div>
-                    </div>
-                </div>
+        <section class="hero">
+            <div class="hero-pill">
+                Reseller & Akun Software Resmi
             </div>
-        </section>
-
-        <!-- Product Catalog Section -->
-        <section class="m3-container" id="catalog">
-            <div class="catalog-toolbar">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
-                    <div>
-                        <h2 style="font-size: 1.6rem; font-weight: 800; color: #fff;">🛍️ Katalog Produk Ready Stock</h2>
-                        <p style="font-size: 0.875rem; color: var(--md-sys-color-on-surface-variant);">Pilih produk digital kebutuhan Anda dan order instan via Telegram bot</p>
-                    </div>
-
-                    <div class="search-container">
-                        <span class="search-icon">🔍</span>
-                        <input type="text" id="searchInput" class="m3-search-input" placeholder="Cari Canva, ChatGPT, Netflix..." oninput="filterProducts()">
-                    </div>
-                </div>
-
-                <!-- Category Chips Filter -->
-                <div class="m3-chips-scroll">
-                    <div class="m3-chip active" data-category="all" onclick="selectCategory('all', this)">
-                        📦 Semua Produk
-                    </div>
-                    @foreach($categories as $cat)
-                    <div class="m3-chip" data-category="{{ $cat->id }}" onclick="selectCategory('{{ $cat->id }}', this)">
-                        {{ $cat->icon ?? '📁' }} {{ $cat->name }} ({{ $cat->products_count }})
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-
-            <!-- Products Grid -->
-            <div class="products-grid" id="productsGrid">
-                @forelse($products as $product)
-                <div class="m3-product-card" data-category-id="{{ $product->category_id }}" data-name="{{ strtolower($product->name) }}" data-desc="{{ strtolower($product->description) }}">
-                    <div>
-                        <div class="product-card-header">
-                            <span class="product-badge-mode {{ $product->isInstant() ? 'mode-instant' : 'mode-manual' }}">
-                                {{ $product->isInstant() ? '⚡ Instant Auto' : '🛒 Reseller' }}
-                            </span>
-                            <span class="product-stock-tag">
-                                📦 Stok: <b>{{ $product->stock_qty }}</b>
-                            </span>
-                        </div>
-
-                        <div class="product-category-name">
-                            {{ $product->category->name ?? 'Digital Product' }}
-                        </div>
-
-                        <h3 class="product-title">{{ $product->name }}</h3>
-
-                        <div class="product-duration-pill">
-                            📅 Durasi: <b>{{ $product->duration_label }}</b>
-                        </div>
-
-                        <p class="product-desc">{{ $product->description ?: 'Akses akun premium legal dan bergaransi penuh sesuai durasi yang tertera.' }}</p>
-                    </div>
-
-                    <div class="product-card-footer">
-                        <div>
-                            <div class="product-price-label">Harga</div>
-                            <div class="product-price-value">{{ $product->formatted_price }}</div>
-                        </div>
-
-                        <a href="https://t.me/{{ $transactionBotUsername }}?start=product_{{ $product->id }}" target="_blank" class="btn-buy-telegram">
-                            🛒 Order via Bot
-                        </a>
-                    </div>
-                </div>
-                @empty
-                <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: var(--md-sys-color-surface-container); border-radius: var(--md-shape-corner-xl);">
-                    <div style="font-size: 3rem; margin-bottom: 12px;">📦</div>
-                    <h3 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 6px;">Belum Ada Produk Ready</h3>
-                    <p style="color: var(--md-sys-color-on-surface-variant); font-size: 0.9rem;">Semua produk sedang habis atau dalam pembaruan stok. Cek kembali beberapa saat lagi.</p>
-                </div>
-                @endforelse
-            </div>
-
-            <div id="noProductsFound" style="display: none; grid-column: 1 / -1; text-align: center; padding: 50px 20px; background: var(--md-sys-color-surface-container); border-radius: var(--md-shape-corner-xl); margin-bottom: 60px;">
-                <div style="font-size: 2.5rem; margin-bottom: 10px;">🔍</div>
-                <h3 style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 4px;">Produk Tidak Ditemukan</h3>
-                <p style="color: var(--md-sys-color-on-surface-variant); font-size: 0.85rem;">Coba cari dengan kata kunci lain atau pilih kategori Semua Produk.</p>
-            </div>
-        </section>
-
-        <!-- How It Works Section -->
-        <section class="guide-section">
-            <div class="m3-container">
-                <div class="section-header">
-                    <h2 class="section-title">Cara Mudah Belanja</h2>
-                    <p class="section-desc">Hanya 4 langkah mudah untuk mendapatkan akun premium Anda secara instan</p>
-                </div>
-
-                <div class="steps-grid">
-                    <div class="step-card">
-                        <div class="step-number">1</div>
-                        <h4 class="step-title">Pilih Produk</h4>
-                        <p class="step-text">Pilih produk yang Anda inginkan di katalog web ini atau langsung di menu bot Telegram.</p>
-                    </div>
-
-                    <div class="step-card">
-                        <div class="step-number">2</div>
-                        <h4 class="step-title">Checkout & QRIS</h4>
-                        <p class="step-text">Bot membuat invoice otomatis. Scan barcode QRIS dari m-Banking atau e-Wallet favorit Anda.</p>
-                    </div>
-
-                    <div class="step-card">
-                        <div class="step-number">3</div>
-                        <h4 class="step-title">Verifikasi Cepat</h4>
-                        <p class="step-text">Klik tombol "Saya Sudah Bayar". Sistem dan admin memverifikasi pembayaran secara real-time.</p>
-                    </div>
-
-                    <div class="step-card">
-                        <div class="step-number">4</div>
-                        <h4 class="step-title">Terima Akun</h4>
-                        <p class="step-text">Kredensial (Email & Password) otomatis dikirimkan ke chat <b>Delivery Bot</b> Anda secara aman.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Material 3 Order Tracking Modal -->
-    <div id="orderModal" class="m3-modal-backdrop" onclick="closeOrderModalOnBackdrop(event)">
-        <div class="m3-dialog">
-            <div class="dialog-header">
-                <h3 class="dialog-title">📦 Lacak Pesanan Anda</h3>
-                <button type="button" class="dialog-close" onclick="closeOrderModal()">✕</button>
-            </div>
-
-            <p style="font-size: 0.875rem; color: var(--md-sys-color-on-surface-variant); margin-bottom: 20px;">
-                Masukkan nomor invoice transaksi Anda untuk mengecek status pembayaran dan pengiriman akun.
+            <h1 class="hero-title">
+                Software & Tool Digital Premium.<br>Instan Tanpa Ribet.
+            </h1>
+            <p class="hero-subtitle">
+                Beli akun ChatGPT Plus, Canva Pro, CapCut, dan layanan streaming favorit Anda. Pembayaran aman via QRIS, pengiriman otomatis ke Telegram.
             </p>
 
-            <form onsubmit="trackOrder(event)" style="display: flex; gap: 10px; margin-bottom: 16px;">
-                <input type="text" id="invoiceInput" class="m3-search-input" style="padding-left: 20px;" placeholder="Contoh: INV-20260817-00001" required>
-                <button type="submit" id="trackBtn" class="m3-btn m3-btn-filled-primary" style="white-space: nowrap;">
-                    Cek Status
+            <div class="hero-actions">
+                <a href="https://t.me/{{ $transactionBotUsername }}" target="_blank" class="btn btn-primary" style="padding: 12px 24px; font-size: 0.95rem;">
+                    Buka Bot Transaksi
+                </a>
+                <button type="button" class="btn btn-ghost" style="padding: 12px 24px; font-size: 0.95rem;" onclick="openModal()">
+                    Cek Status Transaksi
+                </button>
+            </div>
+        </section>
+
+        <!-- Feature Trust Bar -->
+        <div class="feature-row">
+            <div class="feature-item">
+                <span class="feature-icon">🛡️</span>
+                <span>Garansi Akun Aktif</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">⚡</span>
+                <span>Auto-Delivery Bot</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">💳</span>
+                <span>QRIS Semua Bank & E-Wallet</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">💬</span>
+                <span>Customer Support 24/7</span>
+            </div>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="filter-bar">
+            <div class="chips-wrapper">
+                <div class="chip active" data-category="all" onclick="setCategory('all', this)">
+                    Semua ({{ $products->count() }})
+                </div>
+                @foreach($categories as $cat)
+                <div class="chip" data-category="{{ $cat->id }}" onclick="setCategory('{{ $cat->id }}', this)">
+                    {{ $cat->name }} ({{ $cat->products_count }})
+                </div>
+                @endforeach
+            </div>
+
+            <div class="search-box">
+                <span class="search-box-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="Cari produk..." oninput="filterCatalog()">
+            </div>
+        </div>
+
+        <!-- Catalog Grid -->
+        <div class="products-grid" id="productsGrid">
+            @forelse($products as $product)
+            <div class="product-card" data-cat="{{ $product->category_id }}" data-name="{{ strtolower($product->name) }}" data-desc="{{ strtolower($product->description) }}">
+                <div class="card-top">
+                    <div class="card-header">
+                        <span class="badge-tag {{ $product->isInstant() ? 'badge-instant' : 'badge-manual' }}">
+                            {{ $product->isInstant() ? '⚡ Instant' : '🛒 Reseller' }}
+                        </span>
+                        <span class="stock-tag">
+                            Stok: {{ $product->stock_qty }}
+                        </span>
+                    </div>
+
+                    <div class="card-category">{{ $product->category->name ?? 'Tools' }}</div>
+                    <h3 class="card-title">{{ $product->name }}</h3>
+                    <p class="card-desc">{{ $product->description ?: 'Akun resmi bergaransi sesuai durasi yang dipilih.' }}</p>
+                    <span class="card-duration">⏳ {{ $product->duration_label }}</span>
+                </div>
+
+                <div class="card-bottom">
+                    <div class="price-box">
+                        <span class="price-label">Harga</span>
+                        <span class="price-value">{{ $product->formatted_price }}</span>
+                    </div>
+
+                    <a href="https://t.me/{{ $transactionBotUsername }}?start=product_{{ $product->id }}" target="_blank" class="btn-card-buy">
+                        Beli Sekarang
+                    </a>
+                </div>
+            </div>
+            @empty
+            <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--text-muted);">
+                Saat ini belum ada produk yang siap dijual.
+            </div>
+            @endforelse
+        </div>
+
+        <div id="noResults" style="display: none; grid-column: 1 / -1; text-align: center; padding: 48px 20px; color: var(--text-muted);">
+            Produk dengan kata kunci tersebut tidak ditemukan.
+        </div>
+    </main>
+
+    <!-- Order Tracking Modal -->
+    <div id="orderModal" class="modal-backdrop" onclick="closeOnBackdrop(event)">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 class="modal-title">Lacak Pesanan</h3>
+                <button type="button" class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px;">
+                Masukkan nomor invoice transaksi untuk melihat status pembayaran & kredensial akun.
+            </p>
+
+            <form onsubmit="searchOrder(event)" style="display: flex; gap: 8px;">
+                <input type="text" id="invInput" style="flex: 1; height: 40px; background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 0 12px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;" placeholder="INV-20260817-00001" required>
+                <button type="submit" id="searchBtn" class="btn btn-primary" style="padding: 0 16px;">
+                    Cari
                 </button>
             </form>
 
-            <div id="trackLoading" style="display: none; text-align: center; padding: 20px; color: var(--md-sys-color-on-surface-variant);">
-                ⏳ Mencari data pesanan...
+            <div id="trackLoading" style="display: none; font-size: 0.85rem; color: var(--text-muted); margin-top: 14px; text-align: center;">
+                Sedang mencari data...
             </div>
 
-            <div id="trackError" style="display: none; padding: 14px; background: rgba(248, 113, 113, 0.15); border: 1px solid rgba(248, 113, 113, 0.3); border-radius: var(--md-shape-corner-md); color: var(--md-sys-color-error); font-size: 0.85rem; margin-top: 10px;">
-            </div>
+            <div id="trackError" style="display: none; margin-top: 14px; font-size: 0.825rem; color: #f87171;"></div>
 
-            <div id="trackResult" class="track-result-box" style="display: none;">
-                <div class="track-row">
-                    <span class="track-label">Invoice</span>
-                    <span class="track-value" id="resInvoice"></span>
+            <div id="trackResult" class="result-card" style="display: none;">
+                <div class="result-row">
+                    <span style="color: var(--text-muted);">Invoice</span>
+                    <span id="rInvoice" style="font-family: 'JetBrains Mono', monospace; font-weight: 600;"></span>
                 </div>
-                <div class="track-row">
-                    <span class="track-label">Produk</span>
-                    <span class="track-value" id="resProduct"></span>
+                <div class="result-row">
+                    <span style="color: var(--text-muted);">Produk</span>
+                    <span id="rProduct" style="font-weight: 600;"></span>
                 </div>
-                <div class="track-row">
-                    <span class="track-label">Total Tagihan</span>
-                    <span class="track-value" id="resAmount"></span>
+                <div class="result-row">
+                    <span style="color: var(--text-muted);">Total</span>
+                    <span id="rAmount" style="font-family: 'JetBrains Mono', monospace; font-weight: 600;"></span>
                 </div>
-                <div class="track-row">
-                    <span class="track-label">Status Pesanan</span>
-                    <span class="track-value" id="resStatus" style="color: var(--md-sys-color-secondary);"></span>
+                <div class="result-row">
+                    <span style="color: var(--text-muted);">Status</span>
+                    <span id="rStatus" style="color: var(--success); font-weight: 600;"></span>
                 </div>
-                <div class="track-row">
-                    <span class="track-label">Waktu Order</span>
-                    <span class="track-value" id="resTime"></span>
-                </div>
-
-                <div style="margin-top: 20px;">
-                    <a id="resBotBtn" href="https://t.me/{{ $deliveryBotUsername }}?start=activate" target="_blank" class="m3-btn m3-btn-filled-primary" style="width: 100%;">
-                        💬 Buka Delivery Bot (Ambil Akun)
+                <div style="margin-top: 16px;">
+                    <a id="rBotLink" href="https://t.me/{{ $deliveryBotUsername }}?start=activate" target="_blank" class="btn btn-telegram" style="width: 100%;">
+                        Buka Delivery Bot
                     </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Material 3 Footer -->
-    <footer class="m3-footer">
-        <div class="m3-container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <div style="font-weight: 700; color: #fff; margin-bottom: 4px;">⚡ BGPrime Digital Store</div>
-                    <div>Platform Penjualan Produk Digital Resmi, Legal, & Bergaransi.</div>
-                </div>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-inner">
+            <div>
+                © {{ date('Y') }} BGPrime Digital Store. All rights reserved.
+            </div>
 
-                <div class="footer-links">
-                    <a href="https://t.me/{{ $transactionBotUsername }}" target="_blank" class="footer-link">Transaction Bot</a>
-                    <a href="https://t.me/{{ $deliveryBotUsername }}" target="_blank" class="footer-link">Delivery Bot</a>
-                    <a href="javascript:void(0)" onclick="openOrderModal()" class="footer-link">Lacak Order</a>
-                    <a href="{{ url('/admin') }}" class="footer-link" style="color: var(--md-sys-color-primary);">Admin Panel</a>
-                </div>
+            <div class="footer-links">
+                <a href="https://t.me/{{ $transactionBotUsername }}" target="_blank">Transaction Bot</a>
+                <a href="https://t.me/{{ $deliveryBotUsername }}" target="_blank">Delivery Bot</a>
+                <a href="{{ url('/admin') }}">Admin Panel</a>
             </div>
         </div>
     </footer>
 
-    <!-- Vanilla Javascript Logic -->
+    <!-- JS Logic -->
     <script>
-        let currentCategory = 'all';
+        let activeCat = 'all';
 
-        function selectCategory(catId, element) {
-            currentCategory = catId;
-            document.querySelectorAll('.m3-chip').forEach(el => el.classList.remove('active'));
-            element.classList.add('active');
-            filterProducts();
+        function setCategory(id, el) {
+            activeCat = id;
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            filterCatalog();
         }
 
-        function filterProducts() {
-            const query = document.getElementById('searchInput').value.toLowerCase().trim();
-            const cards = document.querySelectorAll('.m3-product-card');
-            let visibleCount = 0;
+        function filterCatalog() {
+            const q = document.getElementById('searchInput').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.product-card');
+            let count = 0;
 
             cards.forEach(card => {
-                const catId = card.getAttribute('data-category-id');
+                const cat = card.getAttribute('data-cat');
                 const name = card.getAttribute('data-name');
                 const desc = card.getAttribute('data-desc');
 
-                const matchesCategory = (currentCategory === 'all' || catId === currentCategory);
-                const matchesSearch = (!query || name.includes(query) || desc.includes(query));
+                const catMatch = (activeCat === 'all' || cat === activeCat);
+                const searchMatch = (!q || name.includes(q) || desc.includes(q));
 
-                if (matchesCategory && matchesSearch) {
+                if (catMatch && searchMatch) {
                     card.style.display = 'flex';
-                    visibleCount++;
+                    count++;
                 } else {
                     card.style.display = 'none';
                 }
             });
 
-            const noProductsFound = document.getElementById('noProductsFound');
-            if (visibleCount === 0 && cards.length > 0) {
-                noProductsFound.style.display = 'block';
-            } else {
-                noProductsFound.style.display = 'none';
-            }
+            document.getElementById('noResults').style.display = (count === 0 && cards.length > 0) ? 'block' : 'none';
         }
 
-        // Modal Handlers
-        function openOrderModal() {
+        function openModal() {
             document.getElementById('orderModal').classList.add('open');
-            document.getElementById('invoiceInput').focus();
+            document.getElementById('invInput').focus();
         }
 
-        function closeOrderModal() {
+        function closeModal() {
             document.getElementById('orderModal').classList.remove('open');
         }
 
-        function closeOrderModalOnBackdrop(e) {
-            if (e.target.id === 'orderModal') {
-                closeOrderModal();
-            }
+        function closeOnBackdrop(e) {
+            if (e.target.id === 'orderModal') closeModal();
         }
 
-        // Order Tracker AJAX
-        async function trackOrder(e) {
+        async function searchOrder(e) {
             e.preventDefault();
-            const invoice = document.getElementById('invoiceInput').value.trim();
+            const invoice = document.getElementById('invInput').value.trim();
             const loading = document.getElementById('trackLoading');
-            const errorBox = document.getElementById('trackError');
-            const resultBox = document.getElementById('trackResult');
-            const trackBtn = document.getElementById('trackBtn');
+            const err = document.getElementById('trackError');
+            const res = document.getElementById('trackResult');
 
             loading.style.display = 'block';
-            errorBox.style.display = 'none';
-            resultBox.style.display = 'none';
-            trackBtn.disabled = true;
+            err.style.display = 'none';
+            res.style.display = 'none';
 
             try {
                 const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -378,27 +281,23 @@
 
                 const json = await response.json();
                 loading.style.display = 'none';
-                trackBtn.disabled = false;
 
                 if (response.ok && json.success) {
                     const data = json.data;
-                    document.getElementById('resInvoice').textContent = data.invoice_number;
-                    document.getElementById('resProduct').textContent = data.product_name;
-                    document.getElementById('resAmount').textContent = data.amount_formatted;
-                    document.getElementById('resStatus').textContent = data.status_label;
-                    document.getElementById('resTime').textContent = data.created_at_formatted;
-                    document.getElementById('resBotBtn').href = data.delivery_bot_url;
-
-                    resultBox.style.display = 'block';
+                    document.getElementById('rInvoice').textContent = data.invoice_number;
+                    document.getElementById('rProduct').textContent = data.product_name;
+                    document.getElementById('rAmount').textContent = data.amount_formatted;
+                    document.getElementById('rStatus').textContent = data.status_label;
+                    document.getElementById('rBotLink').href = data.delivery_bot_url;
+                    res.style.display = 'block';
                 } else {
-                    errorBox.textContent = json.message || 'Pesanan tidak ditemukan.';
-                    errorBox.style.display = 'block';
+                    err.textContent = json.message || 'Nomor invoice tidak ditemukan.';
+                    err.style.display = 'block';
                 }
-            } catch (err) {
+            } catch (error) {
                 loading.style.display = 'none';
-                trackBtn.disabled = false;
-                errorBox.textContent = 'Gagal menghubungi server. Silakan coba lagi.';
-                errorBox.style.display = 'block';
+                err.textContent = 'Gagal memuat status pesanan.';
+                err.style.display = 'block';
             }
         }
     </script>

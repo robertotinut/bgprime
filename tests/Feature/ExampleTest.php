@@ -14,7 +14,7 @@ class ExampleTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * Test storefront renders successfully with Material Design 3.
+     * Test storefront renders successfully with clean dark UI.
      */
     public function test_storefront_renders_successfully(): void
     {
@@ -38,7 +38,7 @@ class ExampleTest extends TestCase
         $response = $this->get('/');
 
         $response->assertStatus(200);
-        $response->assertSee('BGPrime Store');
+        $response->assertSee('BGPrime');
         $response->assertSee('ChatGPT Plus');
     }
 

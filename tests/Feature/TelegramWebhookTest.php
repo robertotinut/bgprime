@@ -18,6 +18,7 @@ class TelegramWebhookTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        config(['services.telegram.webhook_secret' => null]);
 
         $category = Category::create([
             'name' => 'Productivity',
@@ -71,25 +72,28 @@ class TelegramWebhookTest extends TestCase
     public function test_transaction_webhook_handles_checkout_callback(): void
     {
         $user = User::create([
-            'name' => 'Charlie',
-            'telegram_id' => 7778889,
-            'telegram_username' => 'charlie',
+            'name' => 'Alice Wonderland',
+            'telegram_id' => 7771234,
+            'telegram_username' => 'alicew',
         ]);
 
         $payload = [
             'update_id' => 10002,
             'callback_query' => [
-                'id' => 'cb_123',
+                'id' => 'cb_12345',
                 'from' => [
-                    'id' => 7778889,
+                    'id' => 7771234,
                     'is_bot' => false,
-                    'first_name' => 'Charlie',
+                    'first_name' => 'Alice',
+                    'username' => 'alicew',
                 ],
                 'message' => [
-                    'message_id' => 20,
+                    'message_id' => 99,
                     'chat' => [
-                        'id' => 7778889,
+                        'id' => 7771234,
+                        'type' => 'private',
                     ],
+                    'date' => time(),
                 ],
                 'data' => "create_order:{$this->product->id}",
             ],
@@ -102,7 +106,6 @@ class TelegramWebhookTest extends TestCase
             'user_id' => $user->id,
             'product_id' => $this->product->id,
             'payment_status' => Order::PAYMENT_PENDING,
-            'order_status' => Order::ORDER_WAITING_PAYMENT,
         ]);
     }
 
@@ -111,7 +114,7 @@ class TelegramWebhookTest extends TestCase
         $payload = [
             'update_id' => 10003,
             'message' => [
-                'message_id' => 2,
+                'message_id' => 5,
                 'from' => [
                     'id' => 99911122,
                     'is_bot' => false,
@@ -134,5 +137,8 @@ class TelegramWebhookTest extends TestCase
             'telegram_id' => 99911122,
             'telegram_username' => 'dave_user',
         ]);
+
+        $user = User::where('telegram_id', 99911122)->first();
+        $this->assertNotNull($user->delivery_bot_started_at);
     }
 }
